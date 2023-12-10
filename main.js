@@ -1,30 +1,39 @@
+import "./style.css";
 import * as THREE from 'three';
+import { OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
 
-const arScene = new ARObject({
-  trackingMethod: 'best', // Metoda śledzenia
-  sourceType: 'webcam',   // Typ źródła (kamera)
-});
+let myCanvas = document.getElementById('myCanvas')
 
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-const renderer = new THREE.WebXRRenderer({ antialias: true });
+let scene = new THREE.Scene();
+let renderer = new THREE.WebGLRenderer({canvas: myCanvas});
 renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+renderer.setClearColor(0xd4d9db);
+renderer.setPixelRatio(window.devicePixelRatio);
 
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0xffc0cb } );
-const cube = new THREE.Mesh( geometry, material );
-arScene.add( cube );
+let light = new THREE.AmbientLight();
+scene.add(light);
 
-camera.position.z = 5;
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.z = 10;
 
-function animate() {
-	requestAnimationFrame( animate );
+new OrbitControls(camera, renderer.domElement);
 
-	cube.rotation.x += 0.008;
-	cube.rotation.y += 0.008;
+let loader = new GLTFLoader();
 
-	renderer.render( arScene, camera );
+loader.load(
+	"/dist/models/kolumna.glb",
+	(glb) => {
+		scene.add(glb.scene);
+		animate();
+	}
+)
+
+let animate = function (){
+	requestAnimationFrame(animate);
+	if (camera){
+		renderer.render(scene, camera);
+	}
+
 }
 
-animate();
