@@ -15,13 +15,25 @@
 </head>
 
 <body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+	<body>
+
+	</body>
 
 <!-- 
   Example created by Lee Stemkoski: https://github.com/stemkoski
   Based on the AR.js library and examples created by Jerome Etienne: https://github.com/jeromeetienne/AR.js/
 -->
-
+<!---->
+<script type="importmap">
+	{
+	  "imports": {
+		"three": "https://unpkg.com/three@0.159.0/build/three.module.js",
+		"three/addons/": "https://unpkg.com/browse/three@0.159.0/examples/jsm/"
+	  }
+	}
+  </script>
 <script>
+
 
 var scene, camera, renderer, clock, deltaTime, totalTime;
 
@@ -147,11 +159,9 @@ function animate()
 	totalTime += deltaTime;
 	update();
 	render();
-}
+} 
 
 </script>
 
 </body>
 </html>
-
-
