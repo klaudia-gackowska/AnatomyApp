@@ -1,114 +1,131 @@
 import "./style.css";
-//import javascriptLogo from "./javascript.svg"
-//import viteLogo from "/vite.svg"
-import * as THREE from "three";
-import {ARButton} from "three/addons/webxr/ARButton.js";
+import * as THREE from 'three';
+import { OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
 
-let camera, scene, renderer;
-let hiroMarkerMesh;
+var scene, camera, renderer, clock, deltaTime, totalTime;
 
-init();
+var arToolkitSource, arToolkitContext;
 
-async function init()
+var markerRoot1, markerRoot2;
+
+var mesh1;
+
+initialize();
+animate();
+
+function initialize()
 {
 	scene = new THREE.Scene();
 
-	camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight,0.01,20);
-
-	renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
-	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	renderer.outputColorSpace = THREE.SRGBColorSpace;
-	renderer.setAnimationLoop(render);
-	renderer.xr.enabled = true;
-	const container = document.querySelector("#scene-container");
-	container.appendChild(renderer.domElement);
-
-	const ambient = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-	ambient.position.set(0.5, 1, 0.25);
-	scene.add(ambient);
-
-	const imgMarkerHiro = document.getElementById("imgMarkerHiro");
-	const imgMarkerHiroBitmap = await createImageBitmap(imgMarkerHiro);
-	console.log(imgMarkerHiroBitmap);
-
-	const button = ARButton.createButton(renderer,{
-		requiredFeatures: ["image-tracking"],
-		trackedImages:[
-				{
-					image: imgMarkerHiroBitmap,
-					widthInMeters: 0.2,
-				}
-
-		],
-		optionalFeatures: ["dom-overlay"],
-		domOverlay:{
-			root: document.body,
-		},
-
-
-	});
-
-	document.body.appendChild(button);
-
-	const hiroMarkerGeometry = new THREE.BoxGeometry(0.2,0.2,0.2);
-	hiroMarkerGeometry.translate(0,0.1,0);
-	const hiroMarkerMaterial = new THREE.MeshNormalMaterial({
-		transparent: true,
-		opacity: 0.5,
-		side: THREE.DoubleSide,
-	});
-	hiroMarkerMesh = new THREE.Mesh(hiroMarkerGeometry, hiroMarkerMaterial);
-	hiroMarkerMesh.name = "HiroMarkerCube";
-	hiroMarkerMesh.matrixAutoUpdate = false;
-	hiroMarkerMesh.visible = false;
-	scene.add(hiroMarkerMesh);
-}
-
-function render(timeStamp, frame){
-	if(frame)
-	{
-		const results = frame.getImageTrackingResult();
-
-		console.log(results);
-
-		for (const result in results)
-		{
-			const imageIndex = result.index;
-
-			const referenceSpace = renderer.xr.getReferenceSpace();
-			const pose = frame.getPose(result.imageSpace, referenceSpace);
-
-			const state = result.trackingState;
-			console.log(state);
-
-			if (state == "tracked")
-			{
-				console.log("ImageIndex: ", imageIndex);
-
-				if (imageIndex == 0)
-				{
-					hiroMarkerMesh.visible = true;
-					hiroMarkerMesh.matrix.fromArray(pose.transform.matrix);
-					console.log("Hiro image target has been found", hiroMarkerMesh.position);
-				}
-
+	let ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
+	scene.add( ambientLight );
 				
+	camera = new THREE.Camera();
+	scene.add(camera);
 
-			} 
-			else if(state == "emulated")
-			{
-				console.log("Hiro image target has been not found")
-			}
-		}
-  
+	renderer = new THREE.WebGLRenderer({
+		antialias : true,
+		alpha: true
+	});
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	renderer.setSize( 640, 480 );
+	renderer.domElement.style.position = 'absolute'
+	renderer.domElement.style.top = '0px'
+	renderer.domElement.style.left = '0px'
+	document.body.appendChild( renderer.domElement );
+
+	clock = new THREE.Clock();
+	deltaTime = 0;
+	totalTime = 0;
+	
+	////////////////////////////////////////////////////////////
+	// setup arToolkitSource
+	////////////////////////////////////////////////////////////
+
+	arToolkitSource = new THREEx.ArToolkitSource({
+		sourceType : 'webcam',
+	});
+
+	function onResize()
+	{
+		arToolkitSource.onResize()	
+		arToolkitSource.copySizeTo(renderer.domElement)	
+		if ( arToolkitContext.arController !== null )
+		{
+			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+		}	
 	}
 
-	renderer.render(scene, camera);
+	arToolkitSource.init(function onReady(){
+		onResize()
+	});
+	
+	// handle resize event
+	window.addEventListener('resize', function(){
+		onResize()
+	});
+	
+	////////////////////////////////////////////////////////////
+	// setup arToolkitContext
+	////////////////////////////////////////////////////////////	
+
+	// create atToolkitContext
+	arToolkitContext = new THREEx.ArToolkitContext({
+		cameraParametersUrl: 'data/camera_para.dat',
+		detectionMode: 'mono'
+	});
+	
+	// copy projection matrix to camera when initialization complete
+	arToolkitContext.init( function onCompleted(){
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+	});
+
+	////////////////////////////////////////////////////////////
+	// setup markerRoots
+	////////////////////////////////////////////////////////////
+
+	// build markerControls
+	markerRoot1 = new THREE.Group();
+	scene.add(markerRoot1);
+	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
+		type: 'pattern', patternUrl: "data/kg.patt",
+	})
+
+	let geometry1	= new THREE.CubeGeometry(1,1,1);
+	let material1	= new THREE.MeshNormalMaterial({
+		transparent: true,
+		opacity: 0.5,
+		side: THREE.DoubleSide
+	}); 
+	
+	mesh1 = new THREE.Mesh( geometry1, material1 );
+	mesh1.position.y = 0.5;
+	
+	markerRoot1.add( mesh1 );
 }
 
-window.addEventListener("resize", () => {
-	camera.aspect = window.innerWidth/window.innerHeight;
-	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
-});
+
+function update()
+{
+	// update artoolkit on every frame
+	if ( arToolkitSource.ready !== false )
+		arToolkitContext.update( arToolkitSource.domElement );
+}
+
+
+function render()
+{
+	renderer.render( scene, camera );
+}
+
+
+function animate()
+{
+	requestAnimationFrame(animate);
+	deltaTime = clock.getDelta();
+	totalTime += deltaTime;
+	update();
+	render();
+}
+
