@@ -1,4 +1,4 @@
-
+/*
 import * as THREE from 'three';
 
 let scene;
@@ -59,3 +59,5 @@ function main()
 }
 
 window.onload = main; 
+
+*/
