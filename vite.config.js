@@ -1,6 +1,9 @@
-import { defineConfig } from "vite";
+// vite.config.js
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
-export default defineConfig({
-     base:"/AnatomyApp/"
-})
+export default {
+  plugins: [
+    basicSsl()
+  ]
+}
 
