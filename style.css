@@ -1,5 +1,21 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+#menu {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+#menu button {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#menuItems button {
+  margin-top: 5px;
 }

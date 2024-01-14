@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>Hello, AR Cube!</title>
+    <link rel="stylesheet" href="style.css">
     <!-- include three.js library -->
     <script src='three.js'></script>
     <!-- include jsartookit -->
@@ -16,17 +16,18 @@
     <script src="/threex/threex-armarkercontrols.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/loaders/GLTFLoader.js"></script>
 </head>
-
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
-    <!-- <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.159.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/browse/three@0.159.0/examples/jsm/"
-            }
-        }
-    </script> -->
+<body>
+    <div id="menu">
+        <button id="menuButton">Menu</button>
+        <div id="menuItems" style="display: none;">
+            <button id="btnAnatomia">Anatomia</button>
+            <button id="btnSzkielet">Szkielet</button>
+            <button id="btnSerce">Serce</button>
+            <button id="btnPluca">Pluca</button>
+            <button id="btnWatroba">Watroba</button>
+            <button id="btnJelita">Jelita</button>
+        </div>
+    </div>
     <script type="module" src="main.js"></script>
 </body>
-
 </html>
