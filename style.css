@@ -13,9 +13,16 @@
 
 #menu button {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 10px; /* Zwiększona przestrzeń między przyciskami */
+  padding: 10px 20px; /* Zwiększone paddingi dla większej powierzchni klikalnej */
+  font-size: 1.5em; /* Zwiększony rozmiar czcionki */
+  cursor: pointer; 
 }
 
 #menuItems button {
   margin-top: 5px;
+}
+
+#menu button.active {
+  background-color: orange;
 }

@@ -108,13 +108,39 @@ function changeImage(imageName) {
 }
 
 function setupMenuButtons() {
-    document.getElementById('btnAnatomia').addEventListener('click', function() { changeImage('/dist/models/anatomia.png'); });
-    document.getElementById('btnSerce').addEventListener('click', function() { changeImage('/dist/models/serce.png'); });
-    document.getElementById('btnPluca').addEventListener('click', function() { changeImage('/dist/models/pluca.png'); });
-    document.getElementById('btnWatroba').addEventListener('click', function() { changeImage('/dist/models/watroba.png'); });
-    document.getElementById('btnSzkielet').addEventListener('click', function() { changeImage('/dist/models/szkieletBezTla.png'); });
-    document.getElementById('btnJelita').addEventListener('click', function() { changeImage('/dist/models/Jelita.png'); });
+    const buttons = document.querySelectorAll('#menuItems button');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Ustawienie obrazu w zależności od klikniętego przycisku
+            switch(this.id) {
+                case 'btnAnatomia':
+                    changeImage('/dist/models/anatomia.png');
+                    break;
+                case 'btnSerce':
+                    changeImage('/dist/models/serce.png');
+                    break;
+                case 'btnPluca':
+                    changeImage('/dist/models/pluca.png');
+                    break;
+                case 'btnWatroba':
+                    changeImage('/dist/models/watroba.png');
+                    break;
+                case 'btnSzkielet':
+                    changeImage('/dist/models/szkieletBezTla.png');
+                    break;
+                case 'btnJelita':
+                    changeImage('/dist/models/jelita.png');
+                    break;
+            }
+
+            // Zmiana koloru tła przycisku na pomarańczowy
+            buttons.forEach(btn => btn.style.backgroundColor = ''); // Resetowanie koloru tła wszystkich przycisków
+            this.style.backgroundColor = 'orange'; // Ustawienie koloru tła klikniętego przycisku na pomarańczowy
+        });
+    });
 }
+
 
 function setupMenuToggle() {
     document.getElementById('menuButton').addEventListener('click', function() {
