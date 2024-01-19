@@ -1,8 +1,8 @@
-var scene, camera, renderer, clock, deltaTime, totalTime;
-var arToolkitSource, arToolkitContext;
-var markerRoot1;
-var imageMesh; // Zmienna do przechowywania płaskiego obrazu
-var imageMaterial;
+let scene, camera, renderer, clock, deltaTime, totalTime;
+let arToolkitSource, arToolkitContext;
+let markerRoot1;
+let imageMesh; 
+let imageMaterial;
 
 initialize();
 animate();
@@ -69,7 +69,7 @@ function initialize() {
     });
 
     imageMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
-    var geometry = new THREE.PlaneGeometry(3.5, 2.5);
+    let geometry = new THREE.PlaneGeometry(3.5, 2.5);
     imageMesh = new THREE.Mesh(geometry, imageMaterial);
     imageMesh.position.y = 0.5;
     imageMesh.rotation.x = -Math.PI / 2;
@@ -102,7 +102,7 @@ function animate() {
 }
 
 function changeImage(imageName) {
-    var texture = new THREE.TextureLoader().load(imageName);
+    let texture = new THREE.TextureLoader().load(imageName);
     imageMaterial.map = texture;
     imageMaterial.needsUpdate = true;
 }
@@ -144,7 +144,7 @@ function setupMenuButtons() {
 
 function setupMenuToggle() {
     document.getElementById('menuButton').addEventListener('click', function() {
-        var menuItems = document.getElementById('menuItems');
+        let menuItems = document.getElementById('menuItems');
         if (menuItems.style.display === 'none') {
             menuItems.style.display = 'block';
         } else {
